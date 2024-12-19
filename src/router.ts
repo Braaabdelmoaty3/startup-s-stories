@@ -7,6 +7,7 @@ const router = Router()
 // get articles
 router.get("/articles", (req, res) => {
   const filePath = path.join(__dirname, "articles.html");
+
   fs.readFile(filePath, (err, data) => {
     if (err) {
       res.status(500).send("Erorr reading this file");
@@ -20,6 +21,7 @@ router.get("/articles", (req, res) => {
 router.get("/articles/:id", (req, res) => {
   const articleId = req.params.id;
   const filePath = path.join(__dirname, "article", `${articleId}.html`);
+
   fs.readFile(filePath, "utf8", (err, data) => {
     if (err) {
       res.status(500).send("Error can't find the artical");
@@ -33,6 +35,7 @@ router.get("/articles/:id", (req, res) => {
 router.put("/article/:id", (req, res) => {
   const articleId = req.params.id;
   const filePath = path.join(__dirname, "article", `${articleId}.html`);
+
   fs.writeFile(filePath, req.body.content, "utf8", (err) => {
     if (err) {
       res.status(500).send("Error updating the article");
@@ -43,6 +46,7 @@ router.put("/article/:id", (req, res) => {
 router.post("/articles", (req, res) => {
   const filePath = path.join(__dirname, 'article.html', `${req.body.id}.html`)
   const content = req.body.content
+
   fs.writeFile(filePath,content, 'utf8',  (err) => {
     if (err) {
       res.status(500).send("Error can't find the artical");
@@ -51,8 +55,17 @@ router.post("/articles", (req, res) => {
     res.status(200).send('article created successfully ');
   })
 });
-router.delete("/articles/:id", (req, res) => {});
+router.delete("/articles/:id", (req, res) => {
+  const articleId = req.params.id;
+  const filePath = path.join(__dirname, 'articles', `${articleId}.html`);
 
-
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      res.status(500).send("Error can't delete the article");
+      return;
+    }
+    res.status(200).send("Article deleted successfully");
+  });
+});
 
 export default router;
